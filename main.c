@@ -19,10 +19,10 @@ int main(){
     *addr2 = 2;
 
     printf("value - %d\n", *addr1);
-    printf("address - %p\n", (void*)addr1);
+    printf("address of addr1- %p\n", (void*)addr1);
     printf("handle - %zu\n", num_handle_1);
     printf("value - %d\n", *addr2);
-    printf("address - %p\n", (void*)addr2);
+    printf("address of addr2- %p\n", (void*)addr2);
     printf("handle - %zu\n", num_handle_2);
 
     // free 1
@@ -34,7 +34,7 @@ int main(){
     allocHandler->unlock(num_handle_3);
 
     printf("value - %d\n", *addr3);
-    printf("address - %p\n", (void*)addr3);
+    printf("address for addr3 - %p\n", (void*)addr3);
     printf("handle - %zu\n", num_handle_3);
 
     return 0;
