@@ -61,24 +61,26 @@ void mem_free(size_t handle){
 // gets the object's singleton instance that will handle all memory
 struct AllocHandler* get_alloc_handler() {
     printf("Getting alloc handler\n");
-    static struct AllocHandler* handler = NULL;
 
-    if (handler == NULL) {
+    static struct AllocHandler handler_instance;
+    static bool initialized = false;
+
+    if (!initialized) {
         printf("Created alloc handler \n");
-        handler = malloc(sizeof(struct AllocHandler));
-        if (!handler) return NULL;
+        handler_instance.alloc   = alloc;
+        handler_instance.lock    = lock;
+        handler_instance.unlock  = unlock;
+        handler_instance.get     = get_addr;
+        handler_instance.free    = mem_free;
+        handler_instance.pack    = pack_mem;
 
-        handler->alloc = alloc;
-        handler->lock = lock;
-        handler->unlock = unlock;
-        handler->get = get_addr;
-        handler->free = mem_free;
-        handler->pack = pack_mem;
+        initialized = true;
     }
-    printf("Returned alloc handler \n");
 
-    return handler;
+    printf("Returned alloc handler \n");
+    return &handler_instance;
 }
+
 
 void print_heap_func(){
     print_heap();

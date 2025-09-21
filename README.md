@@ -10,6 +10,9 @@ Remove any mmalloc calls
 Make it safer to use and avoid memory issues
 Write README.md
 
+Fix:
+The first byte can not be reused even if its dealocated
+
 psudocode for memory ordering
 get a section
 check if memory before is in use

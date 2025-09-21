@@ -76,7 +76,15 @@ int main(){
     print_registry_func();
     print_heap_func();
     allocHandler->pack();
+
+    // fix issue here were this overrides the value 9
+    size_t ptr0 = allocHandler->alloc(1);
+    int* ptr00 = (int*)allocHandler->get(ptr0);
+    *ptr00 = 0;
+
     print_heap_func();
+
+
 
     return 0;
 }
