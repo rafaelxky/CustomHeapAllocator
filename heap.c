@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "section.h"
 #include "registry.h"
+#include <stdlib.h>
 
 #define HEAP_SIZE 1024 
 
@@ -39,6 +40,7 @@ void* swipe_alloc_sections(size_t size){
             ptr++;
                
         }
+        printf("Allocated %d memory spaces! \n", size);
         printf("Returning heap address %p \n", (void*)&heap[ptr-size]);
         return &heap[ptr - size];
     } 

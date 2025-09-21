@@ -37,5 +37,15 @@ int main(){
     printf("address for addr3 - %p\n", (void*)addr3);
     printf("handle - %zu\n", num_handle_3);
 
+    // free 3
+    allocHandler->free(num_handle_3);
+    size_t handle_4 = allocHandler->alloc(20);
+    int* addr4 = (int*)allocHandler->lock(handle_4);
+    *addr4 = 4;
+
+    printf("value4 = %d \n", *addr4);
+    printf("address for addr4 - %p\n", (void*)addr4);
+    printf("handle4 - %zu\n", handle_4);
+
     return 0;
 }

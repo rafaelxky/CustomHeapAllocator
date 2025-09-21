@@ -57,7 +57,7 @@ void* lock_section(size_t handle) {
 
     section->isLocked = true;
 
-    printf("[DEBUG] lock_section: handle=%zu, addr=%p, isInUse=%d, isLocked=%d\n",
+    printf("[DEBUG] lock_section: handle=%zu, start=%p, isInUse=%d, isLocked=%d\n",
            handle, section->start, section->isInUse, section->isLocked);
 
     return section->start;
