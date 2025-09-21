@@ -146,3 +146,4 @@ void free_section(size_t handle){
     registry[handle].isInUse = false;
     registry[handle].isLocked = false;
 }
+

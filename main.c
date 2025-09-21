@@ -47,5 +47,10 @@ int main(){
     printf("address for addr4 - %p\n", (void*)addr4);
     printf("handle4 - %zu\n", handle_4);
 
+    printf("Expected: \n");
+    printf("Addr1 = Addr3 \n");
+    printf("Handle1 = Handle3 = Handle4 \n");
+    printf("Fragmentation \n");
+
     return 0;
 }
