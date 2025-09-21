@@ -10,10 +10,14 @@
 typedef struct AllocHandler {
     size_t (*alloc)(size_t size);
     void* (*lock)(size_t);
-    void (*unlock)(size_t);
+    int (*unlock)(size_t);
     void* (*get)(size_t);
     void (*free)(size_t); 
+    void (*pack)();
 } AllocHandler;
+
+void print_heap_func();
+void print_registry_func();
 
 struct AllocHandler* get_alloc_handler();
 

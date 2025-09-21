@@ -13,6 +13,8 @@
         "format": "c",
         "initializer_list": "c",
         "ranges": "c",
-        "span": "c"
+        "span": "c",
+        "stdio.h": "c",
+        "chrono": "c"
     }
 }

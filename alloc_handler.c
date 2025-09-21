@@ -27,24 +27,27 @@ struct Section new_section(void* start, size_t size) {
 size_t alloc(size_t size){
     printf("Allocating memory from controller \n");
     // get the start from the heap free section
-    void* start = swipe_alloc_sections(size);
 
     struct Section* section_ptr = get_unused_section();
     section_ptr->isInUse = true;
-    section_ptr->start = start;
     section_ptr->size = size;
+
+    void* start = swipe_alloc_sections(size);
+    section_ptr->start = start;
+
     return section_ptr->handle;
 }
 
 // marks the section as in use
 void* lock(size_t handle){
     printf("Locked section for use\n");
-    lock_section(handle);
+    return lock_section(handle);
 };
 
-void unlock(size_t handle){
+int unlock(size_t handle){
     printf("Unlocked section for use\n");
     unlock_section(handle);
+    return 0;
 }
 
 void* get_addr(size_t handle){
@@ -70,11 +73,18 @@ struct AllocHandler* get_alloc_handler() {
         handler->unlock = unlock;
         handler->get = get_addr;
         handler->free = mem_free;
+        handler->pack = pack_mem;
     }
     printf("Returned alloc handler \n");
 
     return handler;
 }
 
+void print_heap_func(){
+    print_heap();
+}
 
+void print_registry_func(){
+    print_registry();
+}
 

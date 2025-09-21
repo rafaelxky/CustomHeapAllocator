@@ -10,7 +10,9 @@ int main(){
     // get the handler
     struct AllocHandler* allocHandler = get_alloc_handler();
     // get the pointer / handle
+    // handle 0
     size_t num_handle_1 = allocHandler->alloc(10);
+    // handle 1
     size_t num_handle_2 = allocHandler->alloc(20);
     // get the actual address
     int* addr1 = (int*)allocHandler->lock(num_handle_1);
@@ -25,9 +27,9 @@ int main(){
     printf("address of addr2- %p\n", (void*)addr2);
     printf("handle - %zu\n", num_handle_2);
 
-    // free 1
+    // free handle 0
     allocHandler->free(num_handle_1);
-    // allocate 10b
+    // allocate 10
     size_t num_handle_3 = allocHandler->alloc(10);
     int* addr3 = (int*)allocHandler->lock(num_handle_3);
     *addr3 = 3; 
@@ -39,6 +41,7 @@ int main(){
 
     // free 3
     allocHandler->free(num_handle_3);
+
     size_t handle_4 = allocHandler->alloc(20);
     int* addr4 = (int*)allocHandler->lock(handle_4);
     *addr4 = 4;
@@ -51,6 +54,29 @@ int main(){
     printf("Addr1 = Addr3 \n");
     printf("Handle1 = Handle3 = Handle4 \n");
     printf("Fragmentation \n");
+
+    printf("Allocating for ptr1\n");
+    size_t ptr1 = allocHandler->alloc(2);
+    printf("Allocating for ptr2\n");
+    size_t ptr2 = allocHandler->alloc(3);
+
+    int* ptr11 = (int*)allocHandler->get(ptr1);
+    int* ptr22 = (int*)allocHandler->get(ptr2);
+    *ptr11 = 8;
+    *ptr22 = 9;
+
+    // locked section 
+    allocHandler->unlock(ptr2);
+    // free section 1 w/ value 8
+    allocHandler->free(ptr1);
+    allocHandler->unlock(0);
+
+    // ptr1 mus be free and ptr2 must be unlocked 
+
+    print_registry_func();
+    print_heap_func();
+    allocHandler->pack();
+    print_heap_func();
 
     return 0;
 }
