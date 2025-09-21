@@ -29,7 +29,7 @@ Section* get_mem_section(size_t handle){
     }
     Section* section = &registry[handle];
     
-    if (section->isInUse == false)
+    if (!section->isInUse)
     {
         fprintf(stderr, "Error: cannot get a section that is not in use!\n");
         fprintf(stderr, "lock_section: handle=%zu \n",section->handle);
@@ -48,7 +48,7 @@ void* lock_section(size_t handle) {
     
     Section* section = &registry[handle];
 
-    if (section->isInUse == false)
+    if (!section->isInUse)
     {
         fprintf(stderr, "Error: cannot lock a section that is not in use!\n");
         fprintf(stderr, "lock_section: handle=%zu \n",section->handle);
@@ -65,7 +65,7 @@ void* lock_section(size_t handle) {
 
 void* get_section_addr(size_t handle){
     Section section = registry[handle];
-    if (section.isLocked == true)
+    if (section.isLocked)
     {
         return section.start;
     }
@@ -82,7 +82,7 @@ void unlock_section(size_t handle){
 
     Section* section = &registry[handle];
 
-    if (section->isInUse == false)
+    if (!section->isInUse)
     {
         fprintf(stderr, "Error: cannot unlock a section that is not in use!\n");
         fprintf(stderr, "lock_section: handle=%zu \n",section->handle);
@@ -93,7 +93,7 @@ void unlock_section(size_t handle){
 }
 
 bool is_not_occupied(void* addr) {
-    for (int i = 0; i < REGISTRY_SIZE; i++) {
+    for (int i = 0; i <= offset; i++) {
         if (registry[i].isInUse) {
             if ((uint8_t*)addr >= (uint8_t*)registry[i].start &&
                 (uint8_t*)addr <  (uint8_t*)registry[i].start + registry[i].size) {
@@ -110,7 +110,8 @@ Section* get_unused_section(){
 
     printf("Trying to get unused section\n");
 
-    for(size_t i = 0; i < REGISTRY_SIZE; i++){
+    // needs to be +1 so it can find at least 1
+    for(size_t i = 0; i <= offset + 1; i++){
 
         printf("[DEBUG] Section %zu: isInUse=%d, start=%p, handle=%zu\n", i ,registry[i].isInUse, registry[i].start, registry[i].handle);
 
@@ -122,7 +123,7 @@ Section* get_unused_section(){
             return &registry[i];
         }
     }
-    fprintf(stderr, "Error: registry overflow, no free sections available to use!");
+    fprintf(stderr, "Error: registry overflow, no free sections available to use! \n");
     abort();
 }
 
@@ -134,13 +135,14 @@ void free_section(size_t handle){
     }
     
     Section* section = &registry[handle];
-    if (section->isInUse == false)
+    if (!section->isInUse)
     {
         fprintf(stderr, "Error: cannot free a section that is not in use!\n");
         fprintf(stderr, "lock_section: handle=%zu \n",section->handle);
         abort();
     }
     
+    printf("Freeing section %d for use \n", handle);
     registry[handle].isInUse = false;
     registry[handle].isLocked = false;
 }
