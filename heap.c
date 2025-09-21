@@ -64,7 +64,7 @@ void* swipe_alloc_sections(size_t size){
         while (not_occupied_counter < size){ 
             if (is_not_occupied(&heap[ptr]))
             {
-                printf("This section is not occupied - %d \n", ptr);
+                //printf("This section is not occupied - %d \n", ptr);
                 not_occupied_counter++;
                 ptr++;
                 continue;
@@ -78,6 +78,7 @@ void* swipe_alloc_sections(size_t size){
                 return NULL;
             }
         }
+        printf("Returning heap address %p \n", (void*)&heap[ptr-size]);
         return &heap[ptr - size];
     }
 }

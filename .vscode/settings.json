@@ -5,6 +5,14 @@
         "mutex": "c",
         "charconv": "c",
         "registry.h": "c",
-        "alloc_handler.h": "c"
+        "alloc_handler.h": "c",
+        "array": "c",
+        "hash_map": "c",
+        "bitset": "c",
+        "string_view": "c",
+        "format": "c",
+        "initializer_list": "c",
+        "ranges": "c",
+        "span": "c"
     }
 }

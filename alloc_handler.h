@@ -12,6 +12,7 @@ typedef struct AllocHandler {
     void* (*lock)(size_t);
     void (*unlock)(size_t);
     void* (*get)(size_t);
+    void (*free)(size_t); 
 } AllocHandler;
 
 struct AllocHandler* get_alloc_handler();

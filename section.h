@@ -13,6 +13,7 @@ typedef struct Section
     size_t size;
     bool isInUse;
     bool isLocked;
+    size_t handle;
 } Section;
 
 #endif

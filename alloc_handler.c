@@ -28,8 +28,23 @@ size_t alloc(size_t size){
     printf("Allocating memory from controller \n");
     // get the start from the heap
     void* start = swipe_alloc_sections(size);
-    struct Section section = new_section(start, size);
-    return register_mem(section);
+    // instead of new section I need to first check if there are any that can be reused
+
+    struct Section* section_ptr = get_unused_section();
+    // unused section not found, create new, register and return
+    if (section_ptr == NULL)
+    {
+        printf("No unused section found!\n");
+        struct Section section = new_section(start, size);
+        return register_mem(section);
+    } 
+    printf("Unused section found, reusing \n");
+    printf("[DEBUG] Reusing section: handle=%zu, addr=%p\n",section_ptr->handle, section_ptr->start);
+    // if found unused section, reuse it
+    section_ptr->isInUse = true;
+    section_ptr->start = start;
+    section_ptr->size = size;
+    return section_ptr->handle;
 }
 
 // marks the section as in use
@@ -47,6 +62,10 @@ void* get_addr(size_t handle){
     return get_section_addr(handle);
 }
 
+void mem_free(size_t handle){
+    free_section(handle);
+}
+
 // gets the object's singleton instance that will handle all memory
 struct AllocHandler* get_alloc_handler() {
     printf("Getting alloc handler\n");
@@ -61,9 +80,12 @@ struct AllocHandler* get_alloc_handler() {
         handler->lock = lock;
         handler->unlock = unlock;
         handler->get = get_addr;
+        handler->free = mem_free;
     }
     printf("Returned alloc handler \n");
 
     return handler;
 }
+
+
 
