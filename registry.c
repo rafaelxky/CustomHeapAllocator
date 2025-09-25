@@ -57,6 +57,7 @@ void* lock_section(size_t handle) {
 
 void* get_section_addr(size_t handle){
     Section* section = &registry[handle];
+    
     if (handle >= REGISTRY_SIZE)
     {
         fprintf(stderr, "Error: Cannot use a handle larger than the REGISTY_SIZE to get: handle %zu \n", handle);
@@ -135,7 +136,7 @@ void print_registry(){
     for(size_t i = 0; i < REGISTRY_SIZE; i++){
         if (registry[i].isInUse)
         {
-            printf("[DEBUG] Section %zu: isInUse=%d, start=%p, handle=%zu, size=%d, isLocked=%d, value=%d \n", i ,registry[i].isInUse, registry[i].start, registry[i].handle, registry[i].size, registry[i].isLocked, *registry[i].start );
+            printf("Section %zu: isInUse=%d, start=%p, handle=%zu, size=%d, isLocked=%d, value=%d \n", i ,registry[i].isInUse, registry[i].start, registry[i].handle, registry[i].size, registry[i].isLocked, *registry[i].start );
         }
     }
     printf("\n");
