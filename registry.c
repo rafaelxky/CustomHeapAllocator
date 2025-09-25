@@ -7,12 +7,9 @@
 #include <assert.h>
 #include "registry.h"
 
-// interacts with the heap
 Section registry[REGISTRY_SIZE] = {0};
 size_t offset = 0;
 
-// register mem in the central place
-// returns a handle
 size_t register_mem(Section section) {
     section.handle = offset;
     registry[offset] = section;
@@ -20,7 +17,6 @@ size_t register_mem(Section section) {
     return section.handle;
 }
 
-// retreives the section by handle
 Section* get_mem_section(size_t handle){
     if (handle >= REGISTRY_SIZE)
     {
@@ -56,10 +52,6 @@ void* lock_section(size_t handle) {
     }
 
     section->isLocked = true;
-
-    printf("[DEBUG] lock_section: handle=%zu, start=%p, isInUse=%d, isLocked=%d\n",
-           handle, section->start, section->isInUse, section->isLocked);
-
     return section->start;
 }
 
@@ -95,37 +87,23 @@ void unlock_section(size_t handle){
 }
 
 bool is_not_occupied(void* addr) {
-    //printf("is_not_occupied\n");
-    //printf("offset:%d \n", offset);
     for (size_t i = 0; i < REGISTRY_SIZE; i++) {
-        //printf("is_occupied_for_loop \n");
         if (registry[i].isInUse) {
             if ((uint8_t*)addr >= (uint8_t*)registry[i].start &&
                 (uint8_t*)addr <  (uint8_t*)registry[i].start + registry[i].size) {
                 return false; 
             }
-            //printf("addr:%d >= reg:%d && addr:%d < reg:%d\n", addr, registry[i].start, addr, registry[i].size);
         }
     }
-    //printf("The\n");
     return true;
 }
 
-// returns the address to an unused section
-// if none found, return null
 Section* get_unused_section(){
 
-    printf("Trying to get unused section\n");
-
-    // needs to be +1 so it can find at least 1
     for(size_t i = 0; i < REGISTRY_SIZE; i++){
-
-        printf("[DEBUG] Section %zu: isInUse=%d, start=%p, handle=%zu\n", i ,registry[i].isInUse, registry[i].start, registry[i].handle);
 
         if (!registry[i].isInUse)
         {
-            printf("Found unused section at i = %zu \n", i);
-
             registry[i].handle = i;
             return &registry[i];
         }
@@ -149,13 +127,11 @@ void free_section(size_t handle){
         abort();
     }
     
-    printf("Freeing section %d for use \n", handle);
     registry[handle].isInUse = false;
     registry[handle].isLocked = false;
 }
 
 void print_registry(){
-    printf("Printing registry addrs\n");
     for(size_t i = 0; i < REGISTRY_SIZE; i++){
         if (registry[i].isInUse)
         {

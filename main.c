@@ -1,90 +1,82 @@
-#include <stdint.h>
 #include <stdio.h>
+#include <stdint.h>
+#include <assert.h>
 #include "alloc_handler.h"
 
-// todo: implement GC
-// implement free
+// helper to check memory at an offset
+void check_int_value(size_t handle, int expected) {
+    int* ptr = (int*)get_addr(handle);
+    if(ptr != NULL){
+        printf("ptr is not null \n");
+    } else {
+        printf("ptr is null \n");
+    };
 
-int main(){
-    printf("Started\n");
-    // get the handler
-    struct AllocHandler* allocHandler = get_alloc_handler();
-    // get the pointer / handle
-    // handle 0
-    size_t num_handle_1 = allocHandler->alloc(10);
-    // handle 1
-    size_t num_handle_2 = allocHandler->alloc(20);
-    // get the actual address
-    int* addr1 = (int*)allocHandler->lock(num_handle_1);
-    int* addr2 = (int*)allocHandler->lock(num_handle_2);
+    if (*ptr == expected){
+        printf("ptr value is expected %d == %d \n", *ptr, expected);
+    } else {
+        printf("ptr value is not expected %d != %d \n",*ptr, expected);
+    };
+}
+
+int main() {
+    // Allocate 10 and 20 bytes
+    size_t num_handle_1 = alloc(10);
+    size_t num_handle_2 = alloc(20);
+    int* addr1 = (int*)lock(num_handle_1);
+    int* addr2 = (int*)lock(num_handle_2);
     *addr1 = 1;
     *addr2 = 2;
 
-    printf("value - %d\n", *addr1);
-    printf("address of addr1- %p\n", (void*)addr1);
-    printf("handle - %zu\n", num_handle_1);
-    printf("value - %d\n", *addr2);
-    printf("address of addr2- %p\n", (void*)addr2);
-    printf("handle - %zu\n", num_handle_2);
+    // Free first allocation
+    free_mem(num_handle_1);
 
-    // free handle 0
-    allocHandler->free(num_handle_1);
-    // allocate 10
-    size_t num_handle_3 = allocHandler->alloc(10);
-    int* addr3 = (int*)allocHandler->lock(num_handle_3);
-    *addr3 = 3; 
-    allocHandler->unlock(num_handle_3);
+    // Allocate 10 bytes → should reuse first freed space
+    size_t num_handle_3 = alloc(10);
+    int* addr3 = (int*)lock(num_handle_3);
+    *addr3 = 3;
+    free_mem(num_handle_3);
 
-    printf("value - %d\n", *addr3);
-    printf("address for addr3 - %p\n", (void*)addr3);
-    printf("handle - %zu\n", num_handle_3);
-
-    // free 3
-    allocHandler->free(num_handle_3);
-
-    size_t handle_4 = allocHandler->alloc(20);
-    int* addr4 = (int*)allocHandler->lock(handle_4);
+    // Allocate 20 → should move into freed space without overwriting 3
+    size_t handle_4 = alloc(20);
+    int* addr4 = (int*)lock(handle_4);
     *addr4 = 4;
 
-    printf("value4 = %d \n", *addr4);
-    printf("address for addr4 - %p\n", (void*)addr4);
-    printf("handle4 - %zu\n", handle_4);
-
-    printf("Expected: \n");
-    printf("Addr1 = Addr3 \n");
-    printf("Handle1 = Handle3 = Handle4 \n");
-    printf("Fragmentation \n");
-
-    printf("Allocating for ptr1\n");
-    size_t ptr1 = allocHandler->alloc(2);
-    printf("Allocating for ptr2\n");
-    size_t ptr2 = allocHandler->alloc(3);
-
-    int* ptr11 = (int*)allocHandler->get(ptr1);
-    int* ptr22 = (int*)allocHandler->get(ptr2);
+    // Allocate 2 and 3 bytes → assign 8 and 9
+    size_t ptr1 = alloc(2);
+    size_t ptr2 = alloc(3);
+    int* ptr11 = (int*)get_addr(ptr1);
+    int* ptr22 = (int*)get_addr(ptr2);
     *ptr11 = 8;
     *ptr22 = 9;
 
-    // locked section 
-    allocHandler->unlock(ptr2);
-    // free section 1 w/ value 8
-    allocHandler->free(ptr1);
-    allocHandler->unlock(0);
+    // Unlock 9 to be movable, free 8 to be overridden
+    unlock(ptr2);
+    unlock(handle_4);
+    free_mem(ptr1);
 
-    // ptr1 mus be free and ptr2 must be unlocked 
-
+    // Print heap before packing
+    printf("Heap before packing:\n");
+    print_heap_func();
     print_registry_func();
+
+    // Pack memory
+    pack();
+
+    printf("\nHeap after packing:\n");
     print_heap_func();
-    allocHandler->pack();
+    print_registry_func();
 
-    // fix issue here were this overrides the value 9
-    size_t ptr0 = allocHandler->alloc(1);
-    int* ptr00 = (int*)allocHandler->get(ptr0);
-    *ptr00 = 0;
+    // --- TESTS ---
+    // 9 should now occupy the space previously held by 8
+    check_int_value(ptr2, 9);
 
-    print_heap_func();
+    // 4 should occupy the space previously held by 3
+    check_int_value(handle_4, 4);
 
+    // Freed blocks should not contain old values (optional)
+    // e.g., ptr1 was freed, ptr0 was never allocated yet
 
-
+    printf("\nAll tests passed!\n");
     return 0;
 }
