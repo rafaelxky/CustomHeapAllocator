@@ -80,3 +80,5 @@ int main() {
     printf("\nAll tests passed!\n");
     return 0;
 }
+
+// todo: implement registry tree to look if address is free more efficiently
