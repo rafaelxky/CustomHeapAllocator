@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <assert.h>
 #include "alloc_handler.h"
+#include "tests/customHeapTests.h"
 
 // helper to check memory at an offset
 void check_int_value(size_t handle, int expected) {
@@ -20,6 +21,10 @@ void check_int_value(size_t handle, int expected) {
 }
 
 int main() {
+
+    start_all_tests();
+
+    /*
     // Allocate 10 and 20 bytes
     size_t num_handle_1 = alloc(10);
     size_t num_handle_2 = alloc(20);
@@ -79,6 +84,7 @@ int main() {
 
     printf("\nAll tests passed!\n");
     return 0;
+    */
 }
 
 // todo: implement registry tree to look if address is free more efficiently

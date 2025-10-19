@@ -46,39 +46,27 @@ void zero(void* start, size_t size){
 }
 
 void pack_mem(){
-    printf("heap0 = %p \n", &heap[0]);
     for(size_t i = 0; i < REGISTRY_SIZE; i++){
         if (registry[i].isLocked || registry[i].size == 0 || !registry[i].isInUse || registry[i].start == &heap[0]){
-            if (registry[i].start != NULL)
-            {
-                printf("Locked, size 0, heap 0 or not in use - %d \n", *registry[i].start);
-            }
-            
             continue;
         }
 
         uint8_t* free_addr = registry[i].start - 1;
-        printf("start free_adrr = %p \n", free_addr);
         uint8_t* new_start;
 
         while (free_addr >= &heap[0])
         {
             if (is_not_occupied(free_addr) && free_addr != &heap[0])
             {
-                printf("Not occupied %p \n", free_addr);
                 free_addr -= 1;
                 continue;
             }
-            printf("Occupied %p \n", free_addr);
-            printf("value %d \n", *free_addr);
             
             size_t offset_counter = 0;
             uint8_t* curr_addr = registry[i].start;
             new_start = free_addr;
             while (offset_counter != registry[i].size)
             {
-                printf("Moving %p to %p \n", curr_addr, free_addr);
-                printf("Moving %d to %d \n", *curr_addr, *free_addr);
                 *free_addr = *curr_addr;
                 free_addr++;
                 curr_addr++;

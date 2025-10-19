@@ -17,7 +17,9 @@ struct Section new_section(void* start, size_t size) {
 }
 
 size_t alloc(size_t size){
+
     struct Section* section_ptr = get_unused_section();
+
     section_ptr->isInUse = true;
     section_ptr->size = size;
 
@@ -57,3 +59,10 @@ void print_registry_func(){
     print_registry();
 }
 
+Section* get_section(size_t handle){
+    return get_registry_section(handle);
+}
+
+void clear_registry(){
+    clear_registry_func();
+}

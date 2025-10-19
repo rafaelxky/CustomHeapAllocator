@@ -67,6 +67,10 @@ void* get_section_addr(size_t handle){
     return section->start;
 }
 
+Section* get_registry_section(size_t handle){
+    return &registry[handle];
+}
+
 // lock the value so the program may clean it
 void unlock_section(size_t handle){
     if (handle >= REGISTRY_SIZE)
@@ -140,4 +144,10 @@ void print_registry(){
         }
     }
     printf("\n");
+}
+
+void clear_registry_func(){
+    for(size_t i = 0; i < REGISTRY_SIZE; i++){
+        registry[i].isInUse = false;
+    }
 }

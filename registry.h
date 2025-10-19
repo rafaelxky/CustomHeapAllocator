@@ -17,6 +17,8 @@ void* get_section_addr(size_t handle);
 bool is_not_occupied(void* addr);
 Section* get_unused_section();
 void free_section(size_t handle);
+Section* get_registry_section(size_t handle);
+void clear_registry_func();
 
 void print_registry();
 
