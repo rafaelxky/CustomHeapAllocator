@@ -163,5 +163,5 @@ void start_all_tests(){
     
     print_registry_func();
 
-    print_heap_func();
+    //print_heap_func();
 }
